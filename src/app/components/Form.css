@@ -1,0 +1,23 @@
+.container{
+    
+}
+
+.form{
+    width: 400px;
+    background-color: darkgray;
+    margin-top: 25%;
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateY(-50%);
+    padding: 20px;
+    display: block;
+}
+
+.buttonValider{
+    background-color:white;
+    position: relative;
+    width: 100%;
+    height: 40px;
+    font-size: 20px;
+    color: darkgray;
+}
