@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 /* import openSocket from 'socket.io-client'; */
 import Peer from 'peerjs';
 import './VisioScreen.css';
+import { cpus } from 'os';
 
 
 
@@ -18,24 +20,26 @@ class VisioScreen extends Component {
       id: null,
     };
     this.user = window.user;
+    this.peer = new Peer(this.props.id, {
+      host: '88.182.118.218',
+      path: '/api',
+      port: '9000',
+      debug: 3,
+    });
     this.userStream = null;
     /* this.socket = openSocket('http://localhost:8000'); */
     this.publisher = React.createRef();
     this.subscriber = React.createRef();
     /* this.subscriber = React.createRef(); */
     this.playStreamSubscriber = this.playStreamSubscriber.bind(this);
-    this.peer1 = new Peer('toto', {
+    this.callPeer = this.callPeer.bind(this);
+    
+    /* this.peer2 = new Peer(this.props.id+1, {
       host: '88.182.118.218',
       path: '/api',
       port: '9000',
       debug: 3,
-    });
-    this.peer2 = new Peer('tata', {
-      host: '88.182.118.218',
-      path: '/api',
-      port: '9000',
-      debug: 3,
-    });
+    }); */
   }
 
 
@@ -45,6 +49,7 @@ class VisioScreen extends Component {
     this.getPermissions().then((stream) => {
       this.setState({ hasMedia: true });
       /* this.socket.emit('stream', stream); */
+      this.userStream = stream;
       try {
         this.publisher.current.srcObject = stream;
 
@@ -52,16 +57,12 @@ class VisioScreen extends Component {
       } catch (e) {
         this.publisher.current.src = URL.createObjectURL(stream);
       }
-      const call = this.peer1.call('tata', stream);
-      call.on('stream', function (remoteStream) {
-        // Show stream in some <video> element.
-        console.log('remoteStream', remoteStream);
-      });
-      this.peer2.on('call', function (call2) {
+
+      this.peer.on('call', function (call) {
         // Answer the call, providing our mediaStream
-        call2.answer();
-        call2.on('stream', (remoteStream) => {
-          
+        call.answer();
+        call.on('stream', (remoteStream) => {
+
           console.log('subscriber', this.subscriber);
           try {
             self.subscriber.current.srcObject = URL.createObjectURL(remoteStream);
@@ -70,54 +71,26 @@ class VisioScreen extends Component {
             self.subscriber.current.src = URL.createObjectURL(remoteStream);
           }
           console.log('remoteStream2', remoteStream.active);
-        });
+        });        
       });
+    });
 
-      this.sendSignal();
-      this.sendStream(stream);
-      /* this.getStream(); */
+  }
+
+  callPeer() {
+    console.log('this.state.id', this.state.id);
+    const self = this;
+    const call = this.peer.call(this.state.id, this.userStream);
+    call.on('stream', function (remoteStream) {
+      // Show stream in some <video> element.        
+      try {
+        self.subscriber.current.srcObject = URL.createObjectURL(remoteStream);
+      } catch (e) {
+        self.subscriber.current.src = URL.createObjectURL(remoteStream);
+      }
     });
   }
 
-  sendSignal() {
-    console.log('test');
-    /* peer1.on('connection', function (data) {
-        console.log('Hey connection !'); */
-    // when peer1 has signaling data, give it to peer2 somehow
-    /* peer2.signal(data); */
-    /* });
-    peer1.on('data', function (data) {
-        console.log('Hey data!');
-        peer1.send('Hey mama !'); */
-    // when peer1 has signaling data, give it to peer2 somehow
-    /* peer2.signal(data); */
-    /* }); */
-    /* peer2.on('signal', function (data) {
-        // when peer2 has signaling data, give it to peer1 somehow
-        peer1.signal(data);
-    }); */
-  }
-
-  /* getStream() {
-      peer2.on('data', function (data) {
-          // got a data channel message
-          console.log('Subriber On');
-          try {
-              this.subscriber.srcObject = data;
-  
-          } catch (e) {
-              this.subscriber.src = URL.createObjectURL(data);
-          }
-          console.log('got a message from peer1: ' + data);
-      });
-  } */
-
-  sendStream(stream) {
-    this.peer1.on('connect', function () {
-      // wait for 'connect' event before using the data channel
-      this.peer1.send(stream);
-    });
-  }
 
   playStreamSubscriber(stream) {
     try {
@@ -140,20 +113,26 @@ class VisioScreen extends Component {
     })
   }
 
+  link() {
+
+  }
+
   render() {
     return (
       <div>
         <h1 style={{ textAlign: 'center' }}>VisioScreen</h1>
         <div>
-          <label>Id:</label><input type="text" onChange={(text)=>{ this.setState({id: text})}}/>
+          <label>Id:</label><input type="number" onChange={(text) => { this.setState({ id: text.target.value }) }} />
+          <button onClick={() => { this.callPeer() }}>Link</button>
+          <button onClick={() => { this.callPeer() }}>Answer</button>
         </div>
-        <div style={{width:'100%', display:'flex'}}>
-          <div style={{width:'50%'}}>
-            <h2 style={{textAlign:'center'}}>WEBCAM</h2>
+        <div style={{ width: '100%', display: 'flex' }}>
+          <div style={{ width: '50%' }}>
+            <h2 style={{ textAlign: 'center' }}>WEBCAM : {this.props.id}</h2>
             <video className='publisher' ref={this.publisher} autoPlay muted style={{ height: '400px', width: '400px', backgroundColor: 'black' }}></video>
           </div>
-          <div style={{width:'50%'}}>
-            <h2 style={{textAlign:'center'}}>STREAM</h2>
+          <div style={{ width: '50%' }}>
+            <h2 style={{ textAlign: 'center' }}>STREAM</h2>
             <video className='subscriber' ref={this.subscriber} autoPlay style={{ height: '400px', width: '400px', backgroundColor: 'black' }}></video>
           </div>
         </div>
@@ -162,4 +141,9 @@ class VisioScreen extends Component {
   }
 }
 
-export default VisioScreen;
+function mapStateToProps(state) {
+  return {
+    id: state.account.id,
+  }
+}
+export default connect(mapStateToProps)(VisioScreen);
