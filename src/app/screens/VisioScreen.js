@@ -60,7 +60,7 @@ class VisioScreen extends Component {
 
       this.peer.on('call', function (call) {
         // Answer the call, providing our mediaStream
-        call.answer();
+        call.answer(stream);
         call.on('stream', (remoteStream) => {
 
           console.log('subscriber', this.subscriber);
