@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "peerjs": "^0.3.18",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-redux": "^5.0.7",
@@ -12,6 +13,7 @@
     "react-scripts": "1.1.5",
     "redux": "^4.0.0",
     "redux-promise": "^0.6.0",
+    "simple-peer": "^9.1.2",
     "socket.io-client": "^2.1.1",
     "socket.io-stream": "^0.9.1"
   },
