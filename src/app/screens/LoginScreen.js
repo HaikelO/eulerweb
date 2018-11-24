@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import {logIn} from './../actions/Actions';
-import Form from './../components/Form'; 
+import Form from '../components/Form/Form'; 
 
 // Styles
 import './LoginScreen.css';

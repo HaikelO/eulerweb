@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 /* import openSocket from 'socket.io-client'; */
 import Peer from 'peerjs';
+import Modal from '../components/Modal/Modal';
 import './VisioScreen.css';
-import { cpus } from 'os';
 
 
 
@@ -14,6 +14,7 @@ class VisioScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      showModal: false,
       hasMedia: false,
       otherUserId: null,
       streamMedia: null,
@@ -55,22 +56,23 @@ class VisioScreen extends Component {
 
 
       } catch (e) {
-        this.publisher.current.src = URL.createObjectURL(stream);
+        this.publisher.current.src = stream;
       }
 
       this.peer.on('call', function (call) {
         // Answer the call, providing our mediaStream
-        call.answer(stream);
+        self.setState({
+          showModal: true,
+          action: call.answer(stream),
+        });
+        /* call.answer(stream); */
         call.on('stream', (remoteStream) => {
-
-          console.log('subscriber', this.subscriber);
           try {
             self.subscriber.current.srcObject = URL.createObjectURL(remoteStream);
 
           } catch (e) {
             self.subscriber.current.src = URL.createObjectURL(remoteStream);
           }
-          console.log('remoteStream2', remoteStream.active);
         });        
       });
     });
@@ -78,7 +80,6 @@ class VisioScreen extends Component {
   }
 
   callPeer() {
-    console.log('this.state.id', this.state.id);
     const self = this;
     const call = this.peer.call(this.state.id, this.userStream);
     call.on('stream', function (remoteStream) {
@@ -118,8 +119,18 @@ class VisioScreen extends Component {
   }
 
   render() {
+    const {showModal} = this.state; 
     return (
       <div>
+        {showModal? 
+        (
+          <Modal modalIsOpen={showModal}>
+            <div>Salut</div>
+            <button onClick={this.state.action}>
+              Answer
+            </button>
+          </Modal>
+        ) : null}
         <h1 style={{ textAlign: 'center' }}>VisioScreen</h1>
         <div>
           <label>Id:</label><input type="number" onChange={(text) => { this.setState({ id: text.target.value }) }} />
