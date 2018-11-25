@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import {logIn} from './../actions/Actions';
-import Form from '../components/Form/Form'; 
+import {logIn} from '../../actions/Actions';
+import Form from '../../components/Form/Form'; 
 
 // Styles
-import './LoginScreen.css';
+import './LoginScreenStyle.css';
 
 class LoginScreen extends Component {
     constructor(props) {
