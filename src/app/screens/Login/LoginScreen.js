@@ -17,7 +17,7 @@ class LoginScreen extends Component {
     }
 
     componentDidMount() {
-        
+        this.props.fetchPort();
     }
 
     onLogin(){
