@@ -155,6 +155,7 @@ class VisioScreen extends Component {
 function mapStateToProps(state) {
   return {
     id: state.account.id,
+    port: state.config.port,
   }
 }
 export default connect(mapStateToProps)(VisioScreen);

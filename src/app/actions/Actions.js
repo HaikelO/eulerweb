@@ -1,11 +1,19 @@
 import axios from 'axios';
-import { FETCH_ACCOUNT, LOGIN, LOGOUT } from './ActionsTypes';
+import { FETCH_ACCOUNT, FETCH_PORT, LOGIN, LOGOUT } from './ActionsTypes';
 import {URL_SERVER} from './../config/Global';
 
 export function fetchAccount() {
     const request = axios.get(`${URL_SERVER}/api/account`);
     return {
         type: FETCH_ACCOUNT,
+        payload: request
+    }
+}
+
+export function fetchPort() {
+    const request = axios.get(`${URL_SERVER}/api/account`);
+    return {
+        type: FETCH_PORT,
         payload: request
     }
 }

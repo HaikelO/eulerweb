@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import {logIn} from './../actions/Actions';
+import {logIn, fetchPort} from './../actions/Actions';
 import Form from '../components/Form/Form'; 
 
 // Styles
@@ -14,6 +14,10 @@ class LoginScreen extends Component {
         this.state = {
         };
         this.onLogin = this.onLogin.bind(this);
+    }
+
+    componentDidMount() {
+        
     }
 
     onLogin(){
@@ -46,6 +50,6 @@ function mapStateToProps(state) {
     }
 }
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ logIn }, dispatch);
+    return bindActionCreators({ logIn, fetchPort }, dispatch);
 }
 export default connect (mapStateToProps,mapDispatchToProps)(LoginScreen);
