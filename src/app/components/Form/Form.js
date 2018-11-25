@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 // Styles
-import './Form.css';
+import './FormStyle.css';
 
 class Form extends Component {
   constructor(props) {

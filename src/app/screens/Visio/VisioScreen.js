@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Peer from 'peerjs';
 import Modal from '../../components/Modal/Modal';
+import Chat from '../../components/Chat/Chat';
 
 import './VisioScreenStyle.css';
 
@@ -118,6 +119,7 @@ class VisioScreen extends Component {
             <video className='subscriber' ref={this.subscriber} autoPlay style={{ height: '400px', width: '400px', backgroundColor: 'black' }}></video>
           </div>
         </div>
+        <Chat/>
       </div>
     );
   }
