@@ -1,78 +1,52 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-/* import openSocket from 'socket.io-client'; */
 import Peer from 'peerjs';
-import Modal from '../components/Modal/Modal';
-import './VisioScreen.css';
+import Modal from '../../components/Modal/Modal';
 
+import './VisioScreenStyle.css';
 
-
-
-/* var conn1 = peer1.connect('tata') */
-/* var conn2 = peer2.connect('toto') */
 class VisioScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showModal: false,
       hasMedia: false,
-      otherUserId: null,
-      streamMedia: null,
       id: null,
     };
     this.user = window.user;
     this.peer = new Peer(this.props.id, {
-      host: '88.182.118.218',
+      host: 'projecteuler.herokuapp.com',
       path: '/api',
-      port: '9000',
+      port: '',
+      ssl: true,
       debug: 3,
     });
     this.userStream = null;
-    /* this.socket = openSocket('http://localhost:8000'); */
     this.publisher = React.createRef();
     this.subscriber = React.createRef();
-    /* this.subscriber = React.createRef(); */
     this.playStreamSubscriber = this.playStreamSubscriber.bind(this);
     this.callPeer = this.callPeer.bind(this);
-    
-    /* this.peer2 = new Peer(this.props.id+1, {
-      host: '88.182.118.218',
-      path: '/api',
-      port: '9000',
-      debug: 3,
-    }); */
   }
-
-
 
   componentDidMount() {
     const self = this;
     this.getPermissions().then((stream) => {
-      this.setState({ hasMedia: true });
-      /* this.socket.emit('stream', stream); */
+      this.setState({ hasMedia: true });      
       this.userStream = stream;
-      try {
-        this.publisher.current.srcObject = stream;
-
-
-      } catch (e) {
-        this.publisher.current.src = stream;
-      }
-
+      this.playPublisher(stream);
       this.peer.on('call', function (call) {
         // Answer the call, providing our mediaStream
         self.setState({
           showModal: true,
-          action: call.answer(stream),
-        });
-        /* call.answer(stream); */
+          action: ()=>{
+            call.answer(stream);
+            self.setState({
+              showModal: false,
+            });
+          },
+        });        
         call.on('stream', (remoteStream) => {
-          try {
-            self.subscriber.current.srcObject = URL.createObjectURL(remoteStream);
-
-          } catch (e) {
-            self.subscriber.current.src = URL.createObjectURL(remoteStream);
-          }
+          self.playStreamSubscriber(remoteStream);
         });        
       });
     });
@@ -83,20 +57,22 @@ class VisioScreen extends Component {
     const self = this;
     const call = this.peer.call(this.state.id, this.userStream);
     call.on('stream', function (remoteStream) {
-      // Show stream in some <video> element.        
-      try {
-        self.subscriber.current.srcObject = URL.createObjectURL(remoteStream);
-      } catch (e) {
-        self.subscriber.current.src = URL.createObjectURL(remoteStream);
-      }
+      // Show stream in some <video> element. 
+      self.playStreamSubscriber(remoteStream); 
     });
   }
 
+  playPublisher(stream) {
+    try {
+      this.publisher.current.srcObject = stream;
+    } catch (e) {
+      this.publisher.current.src = stream;
+    }
+  }
 
   playStreamSubscriber(stream) {
     try {
       this.subscriber.current.srcObject = URL.createObjectURL(stream);
-
     } catch (e) {
       this.subscriber.current.src = URL.createObjectURL(stream);
     }
@@ -114,10 +90,6 @@ class VisioScreen extends Component {
     })
   }
 
-  link() {
-
-  }
-
   render() {
     const {showModal} = this.state; 
     return (
@@ -131,13 +103,12 @@ class VisioScreen extends Component {
             </button>
           </Modal>
         ) : null}
-        <h1 style={{ textAlign: 'center' }}>VisioScreen</h1>
+        <h1 style={{textAlign: 'center'}}>VisioScreen</h1>
         <div>
           <label>Id:</label><input type="number" onChange={(text) => { this.setState({ id: text.target.value }) }} />
-          <button onClick={() => { this.callPeer() }}>Link</button>
-          <button onClick={() => { this.callPeer() }}>Answer</button>
+          <button onClick={() => { this.callPeer() }}>Call</button>
         </div>
-        <div style={{ width: '100%', display: 'flex' }}>
+        <div style={{ width: '100%', display: 'flex'}}>
           <div style={{ width: '50%' }}>
             <h2 style={{ textAlign: 'center' }}>WEBCAM : {this.props.id}</h2>
             <video className='publisher' ref={this.publisher} autoPlay muted style={{ height: '400px', width: '400px', backgroundColor: 'black' }}></video>

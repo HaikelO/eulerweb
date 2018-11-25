@@ -4,6 +4,8 @@ const initialState = {
     isAuthenticated: false,
     info: {},
     id: null,
+    isStudent: false,
+    isTeacher: false,
 };
 
 export default function (state = initialState, action) {
@@ -18,7 +20,8 @@ export default function (state = initialState, action) {
                 return {
                     ...state,
                     isAuthenticated: true,
-                    id:  action.payload.data.info.id,                 
+                    id:  action.payload.data.info.id,
+                    isStudent: action.payload.data.info.isStudent,                  
                 }
             } else {
                 return {

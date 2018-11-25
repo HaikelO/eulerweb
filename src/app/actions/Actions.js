@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { FETCH_ACCOUNT, FETCH_PORT, LOGIN, LOGOUT } from './ActionsTypes';
+import { FETCH_ACCOUNT, FETCH_PORT, LOGIN, LOGOUT, FETCH_TEACHERS} from './ActionsTypes';
 import {URL_SERVER} from './../config/Global';
 
 export function fetchAccount() {
@@ -30,6 +30,14 @@ export function logOut() {
     const request = axios.post('/api/logout');
     return {
         type: LOGOUT,
+        payload: request,
+    }
+}
+
+export function fetchTeachers() {
+    const request = axios.get(`${URL_SERVER}/api/teachers`);
+    return {
+        type: FETCH_TEACHERS,
         payload: request,
     }
 }

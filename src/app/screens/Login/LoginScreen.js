@@ -6,7 +6,7 @@ import {logIn, fetchPort} from './../actions/Actions';
 import Form from '../components/Form/Form'; 
 
 // Styles
-import './LoginScreen.css';
+import './LoginScreenStyle.css';
 
 class LoginScreen extends Component {
     constructor(props) {
