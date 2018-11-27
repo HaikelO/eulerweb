@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import {logIn, fetchPort} from '../../actions/Actions';
 import Form from '../../components/Form/Form'; 
@@ -21,13 +20,14 @@ class LoginScreen extends Component {
     }
 
     onLogin(){
-        this.props.logIn().then((result)=> {
-            console.log('onLogin result', result);
+        const {username, password} = this.state
+        this.props.logIn({username, password}).then((result)=> {
+            console.log('onLogin result', result)
             if(result.payload.data.status === 'ok'){
-                this.props.history.push('/visio');
+                this.props.history.push('/visio')
             }
         }).catch((error) => {
-            console.log('onLogin error', error);
+            console.log('onLogin error', error)
         });
     }
 
@@ -44,12 +44,8 @@ class LoginScreen extends Component {
         );
     }
 }
-function mapStateToProps(state) {
-    return {
-        
-    }
-}
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ logIn, fetchPort }, dispatch);
-}
+const mapStateToProps = state => ({})
+
+const mapDispatchToProps = { logIn, fetchPort }
+
 export default connect (mapStateToProps,mapDispatchToProps)(LoginScreen);

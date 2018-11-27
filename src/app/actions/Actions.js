@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { FETCH_ACCOUNT, FETCH_PORT, LOGIN, LOGOUT, FETCH_TEACHERS} from './ActionsTypes';
+import { FETCH_ACCOUNT, FETCH_PORT, LOGIN, LOGOUT, FETCH_TEACHERS, NEW_MESSAGE, FETCH_MESSAGES} from './ActionsTypes';
 import {URL_SERVER} from './../config/Global';
 
 export function fetchAccount() {
@@ -38,6 +38,21 @@ export function fetchTeachers() {
     const request = axios.get(`${URL_SERVER}/api/teachers`);
     return {
         type: FETCH_TEACHERS,
+        payload: request,
+    }
+}
+
+export function newMessage(message) {
+    return {
+        type: NEW_MESSAGE,
+        payload: message,
+    }
+}
+
+export function fetchMessages() {
+    const request = axios.get(`${URL_SERVER}/api/messages`);
+    return {
+        type: FETCH_MESSAGES,
         payload: request,
     }
 }
