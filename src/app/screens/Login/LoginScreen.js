@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {logIn, fetchPort} from '../../actions/Actions';
-import Form from '../../components/Form/Form'; 
+import { logIn, fetchPort } from '../../actions/Actions';
+import Form from '../../components/Form/Form';
 
 // Styles
 import './LoginScreenStyle.css';
@@ -19,11 +19,11 @@ class LoginScreen extends Component {
         this.props.fetchPort();
     }
 
-    onLogin(){
-        const {username, password} = this.state
-        this.props.logIn({username, password}).then((result)=> {
+    onLogin() {
+        const { username, password } = this.state
+        this.props.logIn({ username, password }).then((result) => {
             console.log('onLogin result', result)
-            if(result.payload.data.status === 'ok'){
+            if (result.payload.data.status === 'ok') {
                 this.props.history.push('/visio')
             }
         }).catch((error) => {
@@ -34,11 +34,11 @@ class LoginScreen extends Component {
     render() {
         return (
             <div>
-                <Form handleSubmit={()=>this.onLogin()}>
-                    <label className="label">Login</label>   
-                    <input type="text" className="input"/>
+                <Form handleSubmit={() => this.onLogin()}>
+                    <label className="label">Login</label>
+                    <input type="text" className="input" />
                     <label className="label">Password</label>
-                    <input type="password" className="input"/>
+                    <input type="password" className="input" />
                 </Form>
             </div>
         );
@@ -48,4 +48,4 @@ const mapStateToProps = state => ({})
 
 const mapDispatchToProps = { logIn, fetchPort }
 
-export default connect (mapStateToProps,mapDispatchToProps)(LoginScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

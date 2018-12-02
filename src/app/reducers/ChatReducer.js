@@ -7,11 +7,12 @@ const initialState = {
 export default function (state = initialState, action) {
     switch (action.type) {
         case NEW_MESSAGE:
+            console.log('Action', action)
             return {
                 ...state,
-                messages: [...state.messages,{message: action.message}],
+                messages: [...state.messages, action.payload],
             }
-        case FETCH_MESSAGES: 
+        case FETCH_MESSAGES:
             return {
                 ...state,
                 messages: action.payload.data,

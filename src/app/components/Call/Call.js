@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Peer from 'peerjs'
-import { Chat } from './../Chat/Chat'
+import Chat from './../Chat/Chat'
 import Player from '../Player/Player'
 import Modal from '../../components/Modal/Modal'
 import { newMessage, fetchMessages } from './../../actions/Actions'
@@ -19,25 +19,24 @@ export class Call extends Component {
       answer: false,
       conn: null,
     }
-    /* this.peer = new Peer(this.props.id, {
+    this.peer = new Peer(this.props.id, {
       host: 'projecteuler.herokuapp.com',
       path: '/api',
       port: '',
       ssl: true,
       debug: 3,
-    }); */
-    this.peer = new Peer(this.props.id, {
+    });
+    /* this.peer = new Peer(this.props.id, {
       host: 'localhost',
       path: '/api',
       port: '5000',
       ssl: true,
       debug: 3,
-    });
+    }); */
   }
 
   componentDidMount() {
-    this.fetchMessages()
-    this.getPermissions().then((stream) => {
+    this.getPermissions().then(stream => {
       const self = this
       this.setState({ hasMedia: true, localStream: stream })
       this.userStream = stream
@@ -45,9 +44,10 @@ export class Call extends Component {
         console.log('peer.id', this.peer.id)
       });
       this.peer.on('connection', (conn) => {
-        this.setState({conn})
-        conn.on('data', (data) => {
-          console.log('data', data)
+        this.setState({ conn })
+        conn.on('data', (message) => {
+          console.log('data', message)
+          this.newMessage(message)
         });
       })
       this.peer.on('call', (call) => {
@@ -77,15 +77,10 @@ export class Call extends Component {
     });
   }
 
-  fetchMessages = () => {
-    this.props.fetchMessages()
-  }
 
-  newMessage = (message) => {
-    const {conn} = this.state
-    conn.send(message)
+
+  newMessage = (message) => {    
     this.props.newMessage(message)
-
   }
 
   callPeer = () => {
@@ -97,10 +92,9 @@ export class Call extends Component {
       // Show stream in some <video> element. 
       self.setState({ remoteStream, session: 'CONNECTING' })
     })
-    conn.on('data', (data) => {
-      console.log('data', data)
-      this.newMessage(data)
-      conn.send('REPLY')
+    conn.on('data', (message) => {
+      console.log('data', message)
+      this.newMessage(message)
     })
   }
 
@@ -124,14 +118,21 @@ export class Call extends Component {
       </button>
     </Modal>
   )
+
   closeCall = () => {
-    const {call} = this.state
+    const { call } = this.state
     call.close()
   }
 
+  renderChat = () => {
+    const { call, answer, conn } = this.state
+    const { messages } = this.props
+    return <Chat messages={messages} call={call} answer={answer} conn={conn} />
+  }
+
   render() {
-    const { localStream, remoteStream, call, session, showModal, answer , conn} = this.state
-    const { id, messages } = this.props
+    const { localStream, remoteStream, session, showModal } = this.state
+    const { id } = this.props
     return (
       <div>
         {showModal ?
@@ -140,7 +141,7 @@ export class Call extends Component {
           ) : null}
         <div>
           <label>Id:</label><input type="number" onChange={(text) => { this.setState({ id: text.target.value }) }} />
-          <button onClick={() => { this.callPeer() }}>Call</button>
+          <button onClick={this.callPeer}>Call</button>
           {session ? <button onClick={this.closeCall}>End</button> : null}
         </div>
         <div style={{ width: '100%', display: 'flex' }}>
@@ -153,19 +154,18 @@ export class Call extends Component {
             {remoteStream ? <Player stream={remoteStream} /> : null}
           </div>
         </div>
-        {session ? <Chat messages={messages} call={call} answer={answer}  conn={conn}/> : null}
+        {session ? this.renderChat() : null}
       </div>
     );
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    id: state.account.id,
-    port: state.config.port,
-    messages: state.chat.messages,
-  }
-}
+const mapStateToProps = state => ({
+  id: state.account.id,
+  port: state.config.port,
+  messages: state.chat.messages,
+})
+
 
 const mapDispatchToProps = { newMessage, fetchMessages }
 

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { newMessage, fetchMessages } from './../../actions/Actions';
 
 import './VisioScreenStyle.css';
 import Call from '../../components/Call/Call';
@@ -22,11 +21,15 @@ class VisioScreen extends Component {
   componentDidMount() {
   }
 
+  renderCall = () => (
+    <Call/>
+  )
+  
   render() {
     return (
       <div>
         <h1 style={{ textAlign: 'center' }}>VisioScreen</h1>
-        <Call/>
+        {this.renderCall()}
       </div>
     );
   }
@@ -40,6 +43,6 @@ function mapStateToProps(state) {
   }
 }
 
-const mapDispatchToProps = { newMessage, fetchMessages }
+const mapDispatchToProps = {}
 
 export default connect(mapStateToProps, mapDispatchToProps)(VisioScreen);
