@@ -3,44 +3,24 @@ import { connect } from 'react-redux';
 
 import './VisioScreenStyle.css';
 import Call from '../../components/Call/Call';
+import ClassicScreen from '../../containers/ClassicScreen/ClassicScreen'
 
 class VisioScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showModal: false,
-      hasMedia: false,
-      id: null,
-    };
-    this.user = window.user;
-    this.userStream = null;
-    this.publisher = React.createRef();
-    this.subscriber = React.createRef();
-  }
-
-  componentDidMount() {
-  }
-
   renderCall = () => (
     <Call/>
   )
   
   render() {
     return (
-      <div>
-        <h1 style={{ textAlign: 'center' }}>VisioScreen</h1>
+      <ClassicScreen title={'VisioScreen'}>
         {this.renderCall()}
-      </div>
+      </ClassicScreen>
     );
   }
 }
 
 function mapStateToProps(state) {
-  return {
-    id: state.account.id,
-    port: state.config.port,
-    messages: state.chat.messages,
-  }
+  return {}
 }
 
 const mapDispatchToProps = {}
